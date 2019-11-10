@@ -33,12 +33,12 @@ def bar(args: argparse.Namespace):
         df = pd.read_csv(args.input, encoding=args.encoding, index_col=0)
     print(df)
     df.plot.barh()
-    #plt.legend(loc='upper left')
-    #plt.legend(bbox_to_anchor=(0, -0.1,1,0), loc='upper left', frameon=False,ncol=2)
+    #plt.legend(loc="upper left")
+    #plt.legend(bbox_to_anchor=(0, -0.1,1,0), loc="upper left", frameon=False,ncol=2)
 
     if args.under:
         plt.legend(bbox_to_anchor=(0, -0.1),
-                   loc='upper left',
+                   loc="upper left",
                    frameon=False,
                    ncol=2)
     if args.ylabel:
@@ -54,9 +54,9 @@ def style(args: argparse.Namespace):
     sns.set_style("whitegrid", {"grid.linestyle": "--"})
     # set font
     plt.rcParams["font.family"] = "sans-serif"
-    plt.rcParams['font.sans-serif'] = [
-        'Hiragino Maru Gothic Pro', 'Yu Gothic', 'Meirio', 'Takao',
-        'IPAexGothic', 'IPAPGothic', 'VL PGothic', 'Noto Sans CJK JP'
+    plt.rcParams["font.sans-serif"] = [
+        "Hiragino Maru Gothic Pro", "Yu Gothic", "Meiryo", "Takao",
+        "IPAexGothic", "IPAPGothic", "VL PGothic", "Noto Sans CJK JP"
     ]
     # set size
     if args.size is not None:
@@ -73,6 +73,7 @@ def show(file: str):
         plt.show()
     else:
         plt.savefig(file)
+        #bbox_inches="tight", pad_inches=0.05
 
 
 def pixel2inch(pixel: int, dpi: int = 100) -> float:
