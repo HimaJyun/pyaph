@@ -36,6 +36,11 @@ def bar(args: argparse.Namespace):
     #plt.legend(loc="upper left")
     #plt.legend(bbox_to_anchor=(0, -0.1,1,0), loc="upper left", frameon=False,ncol=2)
 
+    # 凡例の向きを合わせる
+    ax = plt.gca()
+    handles, labels = ax.get_legend_handles_labels()
+    plt.legend(handles[::-1], labels[::-1])
+
     if args.under:
         plt.legend(bbox_to_anchor=(0, -0.1),
                    loc="upper left",
