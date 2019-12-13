@@ -101,10 +101,10 @@ def calc(files: list, row: int):
 
     # ヘッダー
     print("type," + ",".join([v.name for v in values]))
-    # max
-    print("max," + ",".join([str(max(v.value)) for v in values]))
     # min
     print("min," + ",".join([str(min(v.value)) for v in values]))
+    # max
+    print("max," + ",".join([str(max(v.value)) for v in values]))
 
 
 def main():
