@@ -19,7 +19,6 @@ def plot(args: argparse.Namespace):
     print(df)
     df.plot()
 
-    # 最高値に注釈付ける奴(値でmaxを取って注釈？)
     if "ylabel" in args:
         plt.ylabel(args.ylabel, rotation=args.yrotation)
     if "title" in args:
@@ -43,17 +42,25 @@ def bar(args: argparse.Namespace):
     if args.annotate:
         for p in ax.patches:
             width = p.get_width()
-            x = width
-            y = p.get_y() + p.get_height() / 4.5  # TODO: 4.5は決め打ち、データが2個の時用
-            if args.inside:
-                # 内側注釈
-                ax.annotate(str(width),
-                            xy=(x - 0.25, y),
-                            color="#ffffff",
-                            ha="right",
-                            weight="medium")
-            else:
-                ax.annotate(str(width), xy=(x + 0.25, y))
+            y = p.get_y() + p.get_height() / 2
+            xloc = -5
+            align = "right"
+            color="#ffffff"
+            bold="medium"
+            if args.outside:
+                xloc = 5
+                align = "left"
+                color="#000000"
+                bold="normal"
+            ax.annotate(str(width),
+                        xy=(width, y),
+                        xytext=(xloc, 0),
+                        textcoords="offset points",
+                        horizontalalignment=align,
+                        verticalalignment="center_baseline",
+                        color=color,
+                        weight=bold)
+            # TODO: データが多い時はフォントサイズ小さくした方が良い
     # 凡例位置
     if args.under:
         plt.legend(bbox_to_anchor=(0, -0.1),
@@ -135,7 +142,7 @@ def main():
     sub.add_argument("-u", "--under", action="store_true")
     sub.add_argument("-t", "--title", type=str)
     sub.add_argument("-a", "--annotate", action="store_false")
-    sub.add_argument("--inside", action="store_true")
+    sub.add_argument("--outside", action="store_true")
     sub.add_argument("input", nargs="?", type=str, default="-")
     sub.add_argument("output", nargs="?", type=str, default="-")
     sub.set_defaults(func=bar)
