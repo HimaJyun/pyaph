@@ -55,7 +55,6 @@ def single(file: str, row: int):
         print(f"{v.elapsed},{v.value}")
 
 
-# TODO: 列指定したい
 def multi(files: list, row: int):
     CSV = namedtuple("CSV", ["file", "csv"])
     reader = []

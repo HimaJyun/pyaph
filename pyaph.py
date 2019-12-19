@@ -19,8 +19,11 @@ def plot(args: argparse.Namespace):
     print(df)
     df.plot()
 
+    # 最高値に注釈付ける奴(値でmaxを取って注釈？)
     if "ylabel" in args:
         plt.ylabel(args.ylabel, rotation=args.yrotation)
+    if "title" in args:
+        plt.title(args.title)
     show(args.output)
 
 
@@ -32,10 +35,26 @@ def bar(args: argparse.Namespace):
     else:
         df = pd.read_csv(args.input, encoding=args.encoding, index_col=0)
     print(df)
-    df.plot.barh()
+    ax = df.plot.barh()
     #plt.legend(loc="upper left")
     #plt.legend(bbox_to_anchor=(0, -0.1,1,0), loc="upper left", frameon=False,ncol=2)
 
+    # 注釈
+    if args.annotate:
+        for p in ax.patches:
+            width = p.get_width()
+            x = width
+            y = p.get_y() + p.get_height() / 4.5  # TODO: 4.5は決め打ち、データが2個の時用
+            if args.inside:
+                # 内側注釈
+                ax.annotate(str(width),
+                            xy=(x - 0.25, y),
+                            color="#ffffff",
+                            ha="right",
+                            weight="medium")
+            else:
+                ax.annotate(str(width), xy=(x + 0.25, y))
+    # 凡例位置
     if args.under:
         plt.legend(bbox_to_anchor=(0, -0.1),
                    loc="upper left",
@@ -43,13 +62,15 @@ def bar(args: argparse.Namespace):
                    ncol=2)
     else:
         # 凡例の向きを合わせる
-        ax = plt.gca()
         handles, labels = ax.get_legend_handles_labels()
         plt.legend(handles[::-1], labels[::-1])
+    # ラベルとタイトル
     if args.ylabel:
         plt.ylabel(None)
     if "xlabel" in args:
         plt.xlabel(args.xlabel)
+    if "title" in args:
+        plt.title(args.title)
     show(args.output)
 
 
@@ -102,6 +123,7 @@ def main():
     sub.add_argument("-e", "--encoding", default="utf-8")
     sub.add_argument("-y", "--ylabel", type=str)
     sub.add_argument("--yrotation", type=int, default=90)
+    sub.add_argument("-t", "--title", type=str)
     sub.add_argument("input", nargs="?", type=str, default="-")
     sub.add_argument("output", nargs="?", type=str, default="-")
     sub.set_defaults(func=plot)
@@ -111,6 +133,9 @@ def main():
     sub.add_argument("-x", "--xlabel", type=str)
     sub.add_argument("-y", "--ylabel", action="store_false")
     sub.add_argument("-u", "--under", action="store_true")
+    sub.add_argument("-t", "--title", type=str)
+    sub.add_argument("-a", "--annotate", action="store_false")
+    sub.add_argument("--inside", action="store_true")
     sub.add_argument("input", nargs="?", type=str, default="-")
     sub.add_argument("output", nargs="?", type=str, default="-")
     sub.set_defaults(func=bar)
