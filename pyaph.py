@@ -35,8 +35,6 @@ def bar(args: argparse.Namespace):
         df = pd.read_csv(args.input, encoding=args.encoding, index_col=0)
     print(df)
     ax = df.plot.barh()
-    #plt.legend(loc="upper left")
-    #plt.legend(bbox_to_anchor=(0, -0.1,1,0), loc="upper left", frameon=False,ncol=2)
 
     # 注釈
     if args.annotate:
@@ -60,7 +58,7 @@ def bar(args: argparse.Namespace):
                         verticalalignment="center_baseline",
                         color=color,
                         weight=bold)
-            # TODO: データが多い時はフォントサイズ小さくした方が良い
+            # データ件数が多い時はフォントサイズを小さくするより画像サイズを大きくする方が見やすい
     # 凡例位置
     if args.under:
         plt.legend(bbox_to_anchor=(0, -0.1),
