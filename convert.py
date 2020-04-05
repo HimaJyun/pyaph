@@ -10,7 +10,7 @@ from collections import namedtuple
 from datetime import datetime
 
 
-def date2sec(date: str, time: str) -> float:
+def date_hwinfo(date: str, time: str) -> float:
     d = date.split(".")
     if len(d) == 1:
         return None
@@ -29,7 +29,24 @@ def date2sec(date: str, time: str) -> float:
                     microsecond=int(s[1]) * 1000).timestamp()
 
 
-def read(file: os.PathLike, row: int):
+def read_txbench(file: os.PathLike, row: int):
+    Column = namedtuple("Column", ["elapsed", "value"])
+
+    with open(file) as fp:
+        # 3行読み飛ばす必要がある
+        for _ in range(3):
+            fp.readline()
+        for value in csv.reader(fp):
+            d = value[0].split(":")
+            time = 0.0
+            time += int(d[0]) * 3600
+            time += int(d[1]) * 60
+            time += int(d[2])
+            time += float(d[3]) / 1000
+            yield Column(time, value[row])
+
+
+def read_hwinfo(file: os.PathLike, row: int):
     # ヘッダー飛ばさなくても変換結果で判断する
     #next(reader)
     Column = namedtuple("Column", ["elapsed", "value"])
@@ -37,7 +54,7 @@ def read(file: os.PathLike, row: int):
     with open(file) as fp:
         first = None
         for value in csv.reader(fp):
-            time = date2sec(value[0], value[1])
+            time = date_hwinfo(value[0], value[1])
             if time is None:
                 continue
 
@@ -49,18 +66,18 @@ def read(file: os.PathLike, row: int):
             yield Column(elapsed, value[row])
 
 
-def single(file: str, row: int):
+def single(file: str, row: int, read_method):
     print(f" 秒 ,{os.path.basename(file)}")
-    for v in read(file, row):
+    for v in read_method(file, row):
         print(f"{v.elapsed},{v.value}")
 
 
-def multi(files: list, row: int):
+def multi(files: list, row: int, read_method):
     CSV = namedtuple("CSV", ["file", "csv"])
     reader = []
     # 指定されたファイルを全て読む
     for file in files:
-        reader.append(CSV(os.path.basename(file), read(file, row)))
+        reader.append(CSV(os.path.basename(file), read_method(file, row)))
 
     # 配列に入れてソート
     Value = namedtuple("Value", ["index", "elapsed", "value"])
@@ -117,16 +134,27 @@ def main():
                         type=int,
                         default=2,
                         help="Select row (0 started)")
+    parser.add_argument("-t",
+                        "--type",
+                        type=str,
+                        choices=["hwinfo", "txbench"],
+                        default="hwinfo",
+                        help="Select data type.")
     parser.add_argument("file", nargs="+", help="CSV file")
     args = parser.parse_args()
+
+    if args.type == "hwinfo":
+        reader = read_hwinfo
+    elif args.type == "txbench":
+        reader = read_txbench
 
     if args.calc:
         calc(args.file, args.row)
     elif len(args.file) == 1:
         # 実はmultiでできるんだけど……
-        single(args.file[0], args.row)
+        single(args.file[0], args.row, reader)
     else:
-        multi(args.file, args.row)
+        multi(args.file, args.row, reader)
 
 
 if __name__ == "__main__":

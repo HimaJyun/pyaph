@@ -17,6 +17,9 @@ def plot(args: argparse.Namespace):
     else:
         df = pd.read_csv(args.input, encoding=args.encoding, index_col=0)
     print(df)
+    plt.rcParams['axes.xmargin'] = 0.0
+    #plt.rcParams['axes.ymargin'] = 0.0
+
     df.plot()
 
     if "ylabel" in args:
@@ -43,13 +46,13 @@ def bar(args: argparse.Namespace):
             y = p.get_y() + p.get_height() / 2
             xloc = -5
             align = "right"
-            color="#ffffff"
-            bold="medium"
+            color = "#ffffff"
+            bold = "medium"
             if args.outside:
                 xloc = 5
                 align = "left"
-                color="#000000"
-                bold="normal"
+                color = "#000000"
+                bold = "normal"
             ax.annotate(str(width),
                         xy=(width, y),
                         xytext=(xloc, 0),
