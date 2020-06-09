@@ -67,7 +67,7 @@ def read_hwinfo(file: os.PathLike, row: int):
 
 
 def single(file: str, row: int, read_method):
-    print(f" 秒 ,{os.path.basename(file)}")
+    print(f"秒,{os.path.basename(file)}")
     for v in read_method(file, row):
         print(f"{v.elapsed},{v.value}")
 
@@ -88,7 +88,7 @@ def multi(files: list, row: int, read_method):
     values = sorted(values, key=lambda x: x.elapsed)
 
     # ヘッダー
-    print(" 秒 ," + ",".join([v.file for v in reader]))
+    print("秒," + ",".join([v.file for v in reader]))
 
     # 出力
     value = [None] * len(reader)
