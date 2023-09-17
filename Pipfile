@@ -8,9 +8,9 @@ pylint = "*"
 yapf = "*"
 
 [packages]
-matplotlib = "==3.2.1"
+matplotlib = "*"
 seaborn = "*"
 pandas = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3"
